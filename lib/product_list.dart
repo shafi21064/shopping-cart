@@ -29,8 +29,8 @@ class _ProductListState extends State<ProductList> {
       appBar: AppBar(
         title: const Text('Product list'),
         centerTitle: true,
-        actions: [
-          const Center(
+        actions: const [
+          Center(
             child: badges.Badge(
               badgeContent: Text(
                 '0',
@@ -42,7 +42,7 @@ class _ProductListState extends State<ProductList> {
               child: Icon(Icons.shopping_bag_outlined),
             ),
           ),
-          const SizedBox(
+          SizedBox(
             width: 20,
           )
         ],
