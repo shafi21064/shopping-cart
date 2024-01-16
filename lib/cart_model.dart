@@ -4,12 +4,12 @@ class Cart{
   final String? productName;
   final int? initialPrice;
   final int? productPrice;
-  final String? quantity;
+  final int? quantity;
   final String? unitTag;
   final String? image;
 
 Cart({
-required this.id,
+this.id,
 required this.productId,
 required this.productName,
 required this.initialPrice,

@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:myapp/cart_list.dart';
+import 'package:myapp/cart_model.dart';
+import 'package:myapp/cart_provider.dart';
+import 'package:myapp/db_helper.dart';
+import 'package:provider/provider.dart';
 
-class ProductList extends StatefulWidget {
-  const ProductList({super.key});
+class ProductList extends StatelessWidget {
+   ProductList({super.key});
 
-  @override
-  State<ProductList> createState() => _ProductListState();
-}
-
-class _ProductListState extends State<ProductList> {
+  DBHelper dbHelper  = DBHelper();
 
   List<String> productName = ['Mango', 'Orange', 'Graphs', 'Banana', 'Chery', 'Peach', 'Mixed Fruit'];
+
   List<String> productUnit = ['KG', 'Dozen', 'KG', 'Dozen', 'KG', 'KG', 'KG'];
+
   List<int> productPrice = [10, 20, 30, 40, 50, 60, 70];
+
   List<String> productImage = [
     'https://www.svz.com/wp-content/uploads/2018/05/Mango.jpg',
     'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Orange-Fruit-Pieces.jpg/2560px-Orange-Fruit-Pieces.jpg',
@@ -25,21 +29,31 @@ class _ProductListState extends State<ProductList> {
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = Provider.of<CartProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product list'),
         centerTitle: true,
-        actions: const [
-          Center(
-            child: badges.Badge(
-              badgeContent: Text(
-                '0',
-                style: TextStyle(
-                  color: Colors.white
-              ),),
-              badgeStyle: badges.BadgeStyle(
-                  shape: badges.BadgeShape.circle),
-              child: Icon(Icons.shopping_bag_outlined),
+        actions: [
+          InkWell(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> CartList()));
+            },
+            child: Center(
+              child: badges.Badge(
+                badgeContent: Consumer<CartProvider>(
+                  builder: (context, value, child) {
+                    return Text(
+                      value.getItemCount().toString(),
+                      style: const TextStyle(
+                        color: Colors.white
+                    ),);
+                  }
+                ),
+                badgeStyle: const badges.BadgeStyle(
+                    shape: badges.BadgeShape.circle),
+                child: Icon(Icons.shopping_bag_outlined),
+              ),
             ),
           ),
           SizedBox(
@@ -52,9 +66,12 @@ class _ProductListState extends State<ProductList> {
         itemCount: productName.length,
           itemBuilder: (context, index){
         return Card(
+          color: Colors.white,
+          surfaceTintColor: Colors.white,
           child: Container(
             margin: const EdgeInsets.all(10),
             padding: const EdgeInsets.all(10),
+            //color: Colors.white,
             height: 100,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -83,16 +100,39 @@ class _ProductListState extends State<ProductList> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Container(
-                      alignment: Alignment.center,
-                      height: 40,
-                      width: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.circular(5),
+                    InkWell(
+                      onTap: () {
+                        dbHelper.insertData(
+                          Cart(
+                              productId: index.toString(),
+                              productName: productName[index].toString(),
+                              initialPrice: productPrice[index],
+                              productPrice: productPrice[index],
+                              quantity: 1,
+                              unitTag: productUnit[index].toString(),
+                              image: productImage[index].toString())
+                        ).then((value) {
+                          debugPrint('successfully added');
+                          cartProvider.addTotalPrice(double.parse(productPrice[index].toString()));
+                          cartProvider.addItem();
+                        }
+                        ).onError((error, stackTrace) {
+                                  debugPrint(error.toString());
+                                }
+                        );
+                        debugPrint('working');
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: 40,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: const Text('Add To Cart',
+                          style: TextStyle(color: Colors.white),),
                       ),
-                      child: const Text('Add To Cart',
-                        style: TextStyle(color: Colors.white),),
                     ),
                   ],
                 )
