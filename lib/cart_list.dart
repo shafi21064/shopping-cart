@@ -78,7 +78,7 @@ class _CartListState extends State<CartList> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        snapshot.data![index].productName.toString(),
+                                        '${snapshot.data![index].productName.toString()} x ${snapshot.data![index].quantity}',
                                         style: const TextStyle(fontSize: 18,
                                             fontWeight: FontWeight.w500),
                                       ),
@@ -94,23 +94,89 @@ class _CartListState extends State<CartList> {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Icon(Icons.delete),
                                       InkWell(
-                                        onTap: () {
-                                          dbHelper.delete(snapshot.data![index].id);
-                                          cartProvider.removeItem();
-                                          cartProvider.removeTotalPrice(double.parse(snapshot.data![index].initialPrice.toString()));
-                                        },
-                                        child: Container(
-                                          alignment: Alignment.center,
-                                          height: 40,
-                                          width: 100,
-                                          decoration: BoxDecoration(
-                                            color: Colors.red,
-                                            borderRadius: BorderRadius.circular(5),
-                                          ),
-                                          child: const Text('Remove',
-                                            style: TextStyle(color: Colors.white),),
+                                          onTap: () {
+                                            dbHelper.delete(snapshot.data![index].id);
+                                            cartProvider.removeItem();
+                                            cartProvider.removeTotalPrice(double.parse(snapshot.data![index].productPrice.toString()));
+                                          },
+                                          child: Icon(Icons.delete)),
+                                      Container(
+                                        alignment: Alignment.center,
+                                        height: 40,
+                                        width: 100,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(5),
+                                          border: Border.all(color: Colors.grey)
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                          children: [
+                                            InkWell(
+                                                onTap: (){
+                                                  print('wor');
+                                                  int quantity =  snapshot.data![index].quantity! ;
+                                                  int price = snapshot.data![index].initialPrice!;
+                                                  quantity--;
+                                                  int? newPrice = price * quantity ;
+                                                  print(quantity);
+
+                                                  if(quantity > 0){
+                                                    dbHelper.updatedQuentity(
+                                                        Cart(
+                                                            id: snapshot.data![index].id!,
+                                                            productId: snapshot.data![index].id!.toString(),
+                                                            productName: snapshot.data![index].productName!,
+                                                            initialPrice: snapshot.data![index].initialPrice!,
+                                                            productPrice: newPrice,
+                                                            quantity: quantity,
+                                                            unitTag: snapshot.data![index].unitTag.toString(),
+                                                            image: snapshot.data![index].image.toString())
+                                                    ).then((value){
+                                                      print(newPrice);
+                                                      print(quantity);
+                                                      newPrice = 0 ;
+                                                      quantity = 0;
+                                                      cartProvider.removeTotalPrice(double.parse(snapshot.data![index].initialPrice!.toString()));
+                                                    }).onError((error, stackTrace){
+                                                      print(error.toString());
+                                                    });
+                                                  }
+
+                                                },
+                                                child: Icon(Icons.remove , color: Colors.black,)),
+                                            Text( snapshot.data![index].quantity.toString(), style: TextStyle(color: Colors.black)),
+                                            InkWell(
+                                                onTap: (){
+                                                  int quantity =  snapshot.data![index].quantity! ;
+                                                  int price = snapshot.data![index].initialPrice!;
+                                                  quantity++;
+                                                  int? newPrice = price * quantity ;
+
+                                                  dbHelper.updatedQuentity(
+                                                      Cart(
+                                                          id: snapshot.data![index].id!,
+                                                          productId: snapshot.data![index].id!.toString(),
+                                                          productName: snapshot.data![index].productName!,
+                                                          initialPrice: snapshot.data![index].initialPrice!,
+                                                          productPrice: newPrice,
+                                                          quantity: quantity,
+                                                          unitTag: snapshot.data![index].unitTag.toString(),
+                                                          image: snapshot.data![index].image.toString())
+                                                  ).then((value){
+                                                    print(newPrice);
+                                                    print(quantity);
+                                                    newPrice = 0 ;
+                                                    quantity = 0;
+
+                                                    cartProvider.addTotalPrice(double.parse(snapshot.data![index].initialPrice!.toString()));
+                                                  }).onError((error, stackTrace){
+                                                    print(error.toString());
+                                                  });
+                                                },
+                                                child: Icon(Icons.add))
+                                          ],
                                         ),
                                       ),
                                     ],
