@@ -61,12 +61,5 @@ class CartProvider with ChangeNotifier{
     return _totalPrice;
   }
 
-  bool _addToCart = false;
-  bool get addToCart => _addToCart;
-
-  setAddTOCart(){
-    _addToCart = !_addToCart;
-    notifyListeners();
-  }
 
 }
