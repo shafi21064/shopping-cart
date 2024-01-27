@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:myapp/Utils/utils.dart';
 import 'package:myapp/cart_list.dart';
 import 'package:myapp/cart_model.dart';
 import 'package:myapp/cart_provider.dart';
@@ -52,11 +53,11 @@ class ProductList extends StatelessWidget {
                 ),
                 badgeStyle: const badges.BadgeStyle(
                     shape: badges.BadgeShape.circle),
-                child: Icon(Icons.shopping_bag_outlined),
+                child: const Icon(Icons.shopping_bag_outlined),
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 20,
           )
         ],
@@ -74,7 +75,7 @@ class ProductList extends StatelessWidget {
             //color: Colors.white,
             height: 100,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
                   height: 100,
@@ -113,11 +114,15 @@ class ProductList extends StatelessWidget {
                               image: productImage[index].toString())
                         ).then((value) {
                           debugPrint('successfully added');
+                          Utils().flashBarMessage(context, 'Successfully added');
                           cartProvider.addTotalPrice(double.parse(productPrice[index].toString()));
                           cartProvider.addItem();
+                          cartProvider.setAddTOCart();
                         }
                         ).onError((error, stackTrace) {
+                          print(error.toString().contains('UNIQUE constraint failed'));
                                   debugPrint(error.toString());
+                                  Utils().flashBarMessage(context, 'Already added');
                                 }
                         );
                         debugPrint('working');
@@ -131,7 +136,7 @@ class ProductList extends StatelessWidget {
                           borderRadius: BorderRadius.circular(5),
                         ),
                         child: const Text('Add To Cart',
-                          style: TextStyle(color: Colors.white),),
+                          style:  TextStyle(color: Colors.white),),
                       ),
                     ),
                   ],

@@ -64,7 +64,7 @@ class _CartListState extends State<CartList> {
                               //color: Colors.white,
                               height: 100,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   SizedBox(
                                     height: 100,

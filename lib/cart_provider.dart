@@ -13,7 +13,6 @@ class CartProvider with ChangeNotifier{
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setInt('cart_item', _itemCounter);
     pref.setDouble('cart_price', _totalPrice);
-
     notifyListeners();
   }
 
@@ -60,6 +59,14 @@ class CartProvider with ChangeNotifier{
   double getTotalPrice(){
     getPref();
     return _totalPrice;
+  }
+
+  bool _addToCart = false;
+  bool get addToCart => _addToCart;
+
+  setAddTOCart(){
+    _addToCart = !_addToCart;
+    notifyListeners();
   }
 
 }
