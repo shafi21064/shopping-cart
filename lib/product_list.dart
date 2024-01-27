@@ -117,7 +117,6 @@ class ProductList extends StatelessWidget {
                           Utils().flashBarMessage(context, 'Successfully added');
                           cartProvider.addTotalPrice(double.parse(productPrice[index].toString()));
                           cartProvider.addItem();
-                          cartProvider.setAddTOCart();
                         }
                         ).onError((error, stackTrace) {
                           print(error.toString().contains('UNIQUE constraint failed'));
